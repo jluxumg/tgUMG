@@ -1,0 +1,172 @@
+<div ng-controller="articuloController as vm">
+  <div class="row">
+    <div class="col-sm-12">
+      <h4 class="page-title">Artículos</h4>
+      <p class="text-muted page-title-alt">
+        <a href="" ui-sref="portal" ui-sref-activate="activate">Dashboard</a> / Articulos
+      </p>
+    </div>
+  </div>
+  <div class="card-box">
+    <form class="form-inline">
+      <div class="form-group">
+        <label class="control-label">Buscar: </label>
+        <input type="text" class="form-control" id="txtBuscar" placeholder="Buscar...">
+      </div>
+
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#Articulo">
+        <span class="fa fa-plus"></span> Nuevo artículo
+      </button>
+    </form>
+    <p>&nbsp;</p>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="tblArticulo">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Descripción</th>
+            <th>Stock</th>
+            <th>Precio Compra</th>
+            <th>Precio Venta</th>
+            <th>Marca</th>
+            <th>Tipo</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in vm.lista" ng-class="{'danger': item.nStock <= 2, 'warning' : item.nStock == 3 || item.nStock == 4}">
+            <td class="text-right">{{item.Id}}</td>
+            <td>{{item.cDescripcion}}</td>
+            <td class="text-right">{{item.nStock}}</td>
+            <td class="text-right">{{item.nPrecioCompra | currency:'S/'}}</td>
+            <td class="text-right">{{item.nPrecioVenta | currency:'S/'}}</td>
+            <td>{{item.cMarca}}</td>
+            <td>{{item.cTipo}}</td>
+            <td>
+              <button class="btn btn-primary btn-block" ng-click="vm.listaPorId(item.Id)">
+                <span class="fa fa-pencil"></span> Editar</button>
+            </td>
+            <td>
+              <button class="btn btn-danger btn-block" ng-click="vm.anular(item.Id)">
+                <span class="fa fa-trash"></span> Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="Articulo" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{vm.tituloModal}}</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal" novalidate role="form" name="frmArticulo" ng-submit="vm.insertarEditar(frmArticulo.$valid)"
+            novalidate>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label col-md-3">Descripción:</label>
+                  <div class="col-md-8">
+                    <input type="text" class="form-control" autofocus autocomplete="off" ng-model="vm.Articulos.cDescripcion" required maxlength="100">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label col-md-3">Marca: </label>
+                  <div class="col-md-8">
+                    <select class="form-control" ng-model="vm.Articulos.nMarca" requiredq>
+                      <option value="">--Seleccione--</option>
+                      <option ng-repeat="item in vm.Marca" value="{{item.cValor}}">{{item.cNomCod}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label col-md-3">Tipo: </label>
+                  <div class="col-md-8">
+                    <select class="form-control" ng-model="vm.Articulos.nTipo" required>
+                      <option value="">--Seleccione--</option>
+                      <option ng-repeat="item in vm.Tipos" value="{{item.cValor}}">{{item.cNomCod}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label col-md-3">Cantidad: </label>
+                  <div class="col-md-8">
+                    <input type="number" class="form-control text-right" autocomplete="off" ng-model="vm.Articulos.nStock" required min="0">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label col-md-3">Precio de Compra: </label>
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <span class="input-group-addon">S/</span>
+                      <input type="text" class="form-control text-right" autocomplete="off" ng-model="vm.Articulos.nPrecioCompra" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label col-md-3">Precio de Venta: </label>
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <span class="input-group-addon">S/</span>
+                      <input type="text" class="form-control text-right" autocomplete="off" ng-model="vm.Articulos.nPrecioVenta" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="col-md-8">
+                    <p>
+                      <button class="btn btn-info btn-block" type="button">
+                        <span class="fa fa-upload"></span> Cargar imagen</button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-offset-6 col-md-3">
+                <p>
+                  <button class="btn btn-danger btn-block" type="button" ng-click="vm.cancelaModal()">
+                    <span class="fa fa-arrow-circle-left "></span> Regresar</button>
+                </p>
+              </div>
+              <div class="col-md-3">
+                <p>
+                  <button class="btn btn-primary btn-block" type="submit">
+                    <span class="fa fa-save"></span> Registrar</button>
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $(this).scrollTop(0);
+  });
+</script>
